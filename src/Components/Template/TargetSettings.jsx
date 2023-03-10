@@ -1,89 +1,119 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './TargetSettings.css'
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
-import * as mdb from 'mdb-ui-kit';
-import InputFeilds from '../Core/InputFeilds';
+import TargetPaths from '../Core/TargetPaths';
+import TargetIgnorePaths from '../Core/TargetIgnorePaths';
+import TargetFileTypeFilter from '../Core/TargetFileTypeFilter';
 
 
 export default function TargetSettings() {
-    const [totalTarget, setTotalTarget] = useState([1])
-    const { register, getValues, control,handleSubmit,watch } = useForm(
-        
-           { TargetSettings:{
-                "TargetPaths": [],
+  const { register, getValues, control, handleSubmit, watch, resetField, setValue } = useForm(
+    {
+      TargetSettings: {
+        "TargetPaths": [],
+        "TargetIgnorePaths": null,
+        "TargetFileTypeFilter": false
 
-            }}
-        );
-
-    const { fields, remove,append} = useFieldArray({
-        control,
-        name:`TargetSettings.TargetPaths`
-
-    });
-
-    const addClick = () => {
-        setTotalTarget([...totalTarget, 1])
+      }
     }
+  );
+  const [ignorePathsToggle, setIgnorePathsToggle] = useState(false)
+  const [fileTypeFilterToggle, setFileTypeFilterToggle] = useState(false)
 
 
-    const delClick = (index) => {
-        setTotalTarget([...totalTarget.slice(0, index), ...totalTarget.slice(index+1)]);
-        remove(index)
 
+  useEffect(() => {
+    resetField("TargetSettings.TargetIgnorePaths")
+    if (!ignorePathsToggle) {
+      setValue('TargetSettings.TargetIgnorePaths', null)
     }
-    const onSubmit = data => {
+  }, [resetField, ignorePathsToggle, setValue])
+
+
+  useEffect(() => {
+
+    setValue('TargetSettings.TargetFileTypeFilter', fileTypeFilterToggle)
+
+  }, [fileTypeFilterToggle])
+
+  console.log(watch())
+
+  const onSubmit = data => {
     console.log(JSON.stringify(data));
-    }
-    
-    
-    
-    
+  }
+  return (
 
 
-    return (
+    <section class="intro">
+      <div class="mask d-flex align-items-center h-100 gradient-custom">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-12 col-lg-9 col-xl-7">
+              <div class="card">
+                <div class="card-body p-5 p-md-5">
+                  <h3 class="mb-4 pb-2">FILE</h3>
+                  <hr class="my-4"></hr>
+                  <FormProvider{...{ register, getValues, control, handleSubmit, watch }}>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <div className="row g-3 text-start">
+                        <TargetPaths />
+                        <div className="col-sm-10 d-flex mt-3 me-3">
+                          <label class="form-check-label">Target Ignore Paths</label>
+                          <div class="form-check form-switch ms-3">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onChange={(e) => { setIgnorePathsToggle(e.target.checked) }} />
+                            {ignorePathsToggle ? (<><label class="muted ms-2">True</label></>) : (<label class="muted ms-2">False</label>
+                            )}
+                          </div>
+                        </div>
+                        {ignorePathsToggle ? (<><TargetIgnorePaths /></>) : (<></>)}
 
 
-        <section class="intro">
-            <div class="mask d-flex align-items-center h-100 gradient-custom">
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-12 col-lg-9 col-xl-7">
-                            <div class="card">
-                                <div class="card-body p-5 p-md-5">
-                                    <h3 class="mb-4 pb-2">FILE</h3>
-                                    <hr class="my-4"></hr>
-                                    <FormProvider{...{ register, getValues, control,handleSubmit,watch }}>
-                                        <form onSubmit={handleSubmit(onSubmit)}>
-                                            <div className="row g-3 text-start">
-                                                <div className="pathcontainer d-flex flex-wrap overflow-y-scroll"style={{maxHeight: '200px'}}>
-                                                {totalTarget.map((v, i) => {
-                                                    return (
-                                                        <>
-                                                            <InputFeilds
-                                                                customType="Text"
-                                                                customName="TargetPaths"
-                                                                id={i}
-                                                            />
-
-                                                            <div className="col-sm-2" >
-                                                                <button type="button" className="btn" onClick={() => { i >= 1 ? delClick(i) : addClick() }}>
-                                                                    {i >= 1 ? <i className="fa-sharp fa-solid fa-trash-can"></i> : <i className="fa-sharp fa-solid fa-plus"></i>}
-                                                                </button>
-
-                                                            </div>
-                                                        </>
-                                                    )
-                                                })}
-                                                </div>
-                                               
-                                                <button class="btn btn-outline-dark" type="submit" >submit</button>
-                                            </div>
-                                        </form>
-                                    </FormProvider>
+                        <div className="col-sm-10 d-flex mt-3 me-3">
+                          <label class="form-check-label">Target FileType Filter</label>
+                          <div class="form-check form-switch ms-3">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onChange={(e) => { setFileTypeFilterToggle(e.target.checked) }} />
+                            {fileTypeFilterToggle ? (<><label class="muted ms-2">True</label></>) : (<label class="muted ms-2">False</label>
+                            )}
+                          </div>
+                        </div>
+                        <div className="d-flex flex-wrap"><TargetFileTypeFilter/></div>
+                        {fileTypeFilterToggle ? (<> <div className="d-flex"><TargetFileTypeFilter/></div></>) : (<></>)}
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <TargetFileTypeFilter/>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
 
 
-                                    {/* <div className="col-sm-10">
+
+
+
+
+                        <button class="btn btn-outline-dark" type="submit" >submit</button>
+                      </div>
+                    </form>
+                  </FormProvider>
+
+
+
+
+
+
+
+                  {/* <div className="col-sm-10">
                                                 <div class="col-auto">
                                                     <div class="form-floating mb-3">
                                                         <input type="email" class="form-control" id="floatingInput" placeholder="TargetPaths" onChange={(e) => { setUploadedFilese.target.v }} />
@@ -117,21 +147,21 @@ export default function TargetSettings() {
 
                                         </div>
                                     </form> */}
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
                 </div>
+
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
 
-        </section>
-
-
-
-
-
+    </section>
 
 
-    )
+
+
+
+
+
+  )
 }
