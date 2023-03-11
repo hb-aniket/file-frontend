@@ -4,6 +4,8 @@ import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import TargetPaths from '../Core/TargetPaths';
 import TargetIgnorePaths from '../Core/TargetIgnorePaths';
 import TargetFileTypeFilter from '../Core/TargetFileTypeFilter';
+import { toast } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
 
 
 export default function TargetSettings() {
@@ -76,32 +78,9 @@ export default function TargetSettings() {
                             )}
                           </div>
                         </div>
-                        <div className="d-flex flex-wrap"><TargetFileTypeFilter/></div>
-                        {fileTypeFilterToggle ? (<> <div className="d-flex"><TargetFileTypeFilter/></div></>) : (<></>)}
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                          <div class="modal-dialog">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <div class="modal-body">
-                                <TargetFileTypeFilter/>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-
-
-
-
-
-
+                        {/* <div className="d-flex flex-wrap"><TargetFileTypeFilter/></div> */}
+                        {!fileTypeFilterToggle ? (<>  <div className=""><TargetFileTypeFilter/></div></>) : (<></>)}
+                  
                         <button class="btn btn-outline-dark" type="submit" >submit</button>
                       </div>
                     </form>
